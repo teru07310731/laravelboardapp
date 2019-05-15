@@ -12,7 +12,7 @@ class PostsTableSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('posts')->indert([
+        DB::table('posts')->insert([
             [
                 'title' =>  '最初の記事',
                 'body'  => '最初の記事のテキストです。',
