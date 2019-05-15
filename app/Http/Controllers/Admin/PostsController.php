@@ -9,6 +9,10 @@ use App\Http\Controllers\Controller;
 
 class PostsController extends Controller
 {
+    public $validateRules = [
+        'title' => 'required',
+        'body' => 'max:500'
+        ];
     /**
      * Display a listing of the resource.
      *
@@ -17,6 +21,8 @@ class PostsController extends Controller
     public function index()
     {
         //
+        $posts = Post::orderderdBy('id', 'desc')->paginate(20);
+        return view('admin.posts.index', compact('posts'));
     }
 
     /**
@@ -27,6 +33,7 @@ class PostsController extends Controller
     public function create()
     {
         //
+        return view('admin.posts.create');
     }
 
     /**
@@ -38,6 +45,10 @@ class PostsController extends Controller
     public function store(Request $request)
     {
         //
+        $this->validate($request, $this->validateRules);
+        Post::create($request->all());
+        \Session::flash('flash_message', '記事を作成しました。');
+        return redirect('admin.posts.edit');
     }
 
     /**
@@ -49,6 +60,8 @@ class PostsController extends Controller
     public function show($id)
     {
         //
+        $post = Post::findOrFail($id);
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -60,6 +73,8 @@ class PostsController extends Controller
     public function edit($id)
     {
         //
+        $post = Post::findOrFail($id);
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -72,6 +87,13 @@ class PostsController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $this->validate($request, $this->validateRules);
+        
+        $post = Post::findOrFail($id);
+        $post->update($request->all());
+        
+        \Session::flash('flash_message', '記事を更新しました。');
+        return redirect('admin/posts');
     }
 
     /**
@@ -83,5 +105,9 @@ class PostsController extends Controller
     public function destroy($id)
     {
         //
+        $post = Post::findOrFail($id);
+        $post->delet($id);
+        \Session::flash('flash_message', '記事を削除しました。');
+        return redirect('admin/posts');
     }
 }
